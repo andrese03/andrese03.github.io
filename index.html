@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="refresh" content="1;url=build/index.html">
+	<link rel="icon" href="build/favicon.ico?cache=false">
+	<title>Andrés Encarnación Ortiz</title>
+</head>
+
+<body>
+	<!-- This is just an index.html file which redirects to the real site -->
+	<span id="message"></span>
+	<script type="text/javascript">
+		setTimeout(function () {
+			var link = document.createElement('a');
+			var span = document.querySelector('#message');
+			console.log(span)
+			link.setAttribute('href', 'build/index.html');
+			link.innerHTML = 'link!'
+			span.innerHTML = 'If you are not redirected automatically, follow this ';
+			span.appendChild(link);
+		}, 2000);
+	</script>
+</body>
+
+</html>
