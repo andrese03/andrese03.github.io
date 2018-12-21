@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles-3.css';
 import './css/main.css';
 
+import ExperienceItem from './components/ExperienceItem/ExperienceItem';
 import SkillsSection from './components/SkillsSection/SkillsSection';
 import AnimatedDots from './components/AnimatedDots/AnimatedDots';
 
@@ -121,6 +122,21 @@ const App = () => {
 					<section className="section experiences-section">
 						<h2 className="section-title"><Icon icon={faBriefcase}/> Experiences</h2>
 
+						<ExperienceItem
+							title="Software Engineer"
+							startDate="mar. 2018"
+							endDate="dec. 2018"
+							company="Instacarro"
+							location="São Paulo, Brazil"
+							description={
+								<>
+									Worked on an Agile Environment by developing requirements based on the business' needs.<br />
+									Collaborate on a migration project of a Legacy System to reduce the software development time and improve the system's performance.<br />
+									Developed custom code to facilitate reporting and enhanced security on a Salesforce Platform and its integrations with other Systems.
+								</>
+							}
+						/>
+
 						<div className="item">
 							<div className="meta">
 								<div className="upper-row">
@@ -133,9 +149,7 @@ const App = () => {
 							{/* <!--//meta--> */}
 							<div className="details">
 								<p>
-									Worked on an Agile Environment by developing requirements based on the business' needs.<br/>
-									Collaborate on a migration project of a Legacy System to reduce the software development time and improve the system's performance.<br/>
-									Developed custom code to facilitate reporting and enhanced security on a Salesforce Platform and its integrations with other Systems.
+								
 								</p>
 							</div>
 							{/* <!--//details--> */}
