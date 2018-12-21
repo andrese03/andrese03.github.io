@@ -140,25 +140,6 @@ const App = () => {
 						<div className="item">
 							<div className="meta">
 								<div className="upper-row">
-									<h3 className="job-title">Software Engineer</h3>
-									<div className="time">mar. 2018 - dec. 2018 </div>
-								</div>
-								{/* <!--//upper-row--> */}
-								<div className="company">Instacarro, São Paulo, Brazil</div>
-							</div>
-							{/* <!--//meta--> */}
-							<div className="details">
-								<p>
-								
-								</p>
-							</div>
-							{/* <!--//details--> */}
-						</div>
-						{/* <!--//item--> */}
-
-						<div className="item">
-							<div className="meta">
-								<div className="upper-row">
 									<h3 className="job-title">Senior Software Engineer</h3>
 									<div className="time">apr. 2018 - oct. 2018 </div>
 								</div>
