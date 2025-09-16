@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Cascadia Code', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-feature-settings: "liga" 0, "calt" 0;
+    text-rendering: optimizeLegibility;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  /* Ensure consistent font rendering */
+  body, input, textarea {
+    font-variant-ligatures: none;
+    font-kerning: none;
+  }
+}
+
+/* Terminal Themes */
+.theme-matrix {
+  background-color: #000000;
+  color: #00ff41;
+}
+
+.theme-dark {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.theme-light {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+/* Terminal prompt colors */
+.prompt-matrix {
+  color: #00ff65;
+}
+
+.prompt-dark {
+  color: #22d3ee;
+}
+
+.prompt-light {
+  color: #2563eb;
+}
+
+/* Terminal cursor */
+.terminal-cursor::after {
+  content: '█';
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Terminal input styling */
+.terminal-input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-feature-settings: 'liga' 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  vertical-align: baseline;
+  box-sizing: border-box;
+}
+
+.terminal-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.terminal-input::selection {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Theme-specific selection colors */
+.theme-matrix .terminal-input::selection {
+  background: rgba(0, 255, 65, 0.3);
+}
+
+.theme-dark .terminal-input::selection {
+  background: rgba(34, 211, 238, 0.3);
+}
+
+.theme-light .terminal-input::selection {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+/* Smooth theme transitions */
+.theme-matrix,
+.theme-dark,
+.theme-light {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.prompt-matrix,
+.prompt-dark,
+.prompt-light {
+  transition: color 0.3s ease;
+}
+
+/* Matrix theme enhancements */
+.theme-matrix {
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
+}
+
+.theme-matrix .prompt-matrix {
+  text-shadow: 0 0 8px rgba(0, 255, 101, 0.5);
+  font-weight: 500;
+}
+
+/* Dark theme enhancements */
+.theme-dark .prompt-dark {
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
+  font-weight: 500;
+}
+
+/* Light theme enhancements */
+.theme-light .prompt-light {
+  font-weight: 600;
+}
+
+/* Custom scrollbar for different themes */
+.theme-matrix::-webkit-scrollbar {
+  width: 8px;
+}
+
+.theme-matrix::-webkit-scrollbar-track {
+  background: rgba(0, 255, 65, 0.1);
+}
+
+.theme-matrix::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 65, 0.3);
+  border-radius: 4px;
+}
+
+.theme-matrix::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 65, 0.5);
+}
+
+.theme-dark::-webkit-scrollbar {
+  width: 8px;
+}
+
+.theme-dark::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.theme-dark::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.theme-light::-webkit-scrollbar {
+  width: 8px;
+}
+
+.theme-light::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.theme-light::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.theme-light::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
