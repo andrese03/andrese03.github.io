@@ -1,0 +1,105 @@
+name: Tag Release on Development Merge
+
+on:
+  push:
+    branches: [ development ]
+
+jobs:
+  # Run CI checks first
+  ci-checks:
+    uses: ./.github/workflows/ci.yml
+  
+  tag-release:
+    runs-on: ubuntu-latest
+    needs: ci-checks
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Get version from package.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          echo "Version found: v$VERSION"
+      
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag ${{ steps.get_version.outputs.version }} already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag ${{ steps.get_version.outputs.version }} does not exist"
+          fi
+      
+      - name: Delete existing tag (if exists)
+        if: steps.check_tag.outputs.exists == 'true'
+        run: |
+          echo "Deleting existing tag and release..."
+          # Delete remote tag
+          git push --delete origin "${{ steps.get_version.outputs.version }}" || true
+          # Delete local tag
+          git tag -d "${{ steps.get_version.outputs.version }}" || true
+      
+      - name: Create new tag
+        run: |
+          echo "Creating tag ${{ steps.get_version.outputs.version }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "${{ steps.get_version.outputs.version }}" -m "Release ${{ steps.get_version.outputs.version }}"
+          git push origin "${{ steps.get_version.outputs.version }}"
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          echo "## Changes in this release" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          # Get commits since last tag (if any)
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            echo "- Initial release with portfolio terminal v2.0.0" >> CHANGELOG.md
+            echo "- Interactive terminal interface with multiple themes" >> CHANGELOG.md
+            echo "- Matrix, dark, and light themes available" >> CHANGELOG.md
+            echo "- Command history and navigation" >> CHANGELOG.md
+            echo "- Custom terminal cursor implementation" >> CHANGELOG.md
+          else
+            echo "### Commits since $LAST_TAG:" >> CHANGELOG.md
+            git log --pretty=format:"- %s" $LAST_TAG..HEAD >> CHANGELOG.md
+          fi
+          
+          echo "" >> CHANGELOG.md
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${LAST_TAG:-${{ steps.get_version.outputs.version }}}...${{ steps.get_version.outputs.version }}" >> CHANGELOG.md
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: Release ${{ steps.get_version.outputs.version }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
+      
+      - name: Run full CI pipeline
+        run: npm run ci
+      
+      - name: Summary
+        run: |
+          echo "✅ CI Pipeline: All checks passed (lint, typecheck, tests, build)"
+          echo "✅ Successfully created tag and release for version ${{ steps.get_version.outputs.version }}"
+          echo "🔗 Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.version }}"
