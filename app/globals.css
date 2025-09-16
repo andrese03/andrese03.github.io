@@ -77,11 +77,60 @@
   -moz-osx-font-smoothing: grayscale;
   vertical-align: baseline;
   box-sizing: border-box;
+  color: inherit;
+  font-weight: bold;
 }
 
 .terminal-input:focus {
   outline: none;
   box-shadow: none;
+}
+
+/* Hide default cursor and create custom block cursor */
+.terminal-input-hidden-cursor {
+  caret-color: transparent;
+}
+
+.terminal-input-cursor {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: bold;
+}
+
+.terminal-input-cursor::after {
+  content: '█';
+  animation: blink 1s infinite;
+}
+
+/* Theme-specific cursor colors */
+.theme-matrix .terminal-input-cursor::after {
+  color: #00ff41;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+}
+
+.theme-dark .terminal-input-cursor::after {
+  color: #f9fafb;
+}
+
+.theme-light .terminal-input-cursor::after {
+  color: #1f2937;
+}
+
+/* Theme-specific input text colors */
+.theme-matrix .terminal-input {
+  color: #00ff41;
+}
+
+.theme-dark .terminal-input {
+  color: #f9fafb;
+}
+
+.theme-light .terminal-input {
+  color: #1f2937;
 }
 
 .terminal-input::selection {

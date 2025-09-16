@@ -11,8 +11,10 @@ export default function SimpleTerminal() {
     const [historyIndex, setHistoryIndex] = useState(-1);
     const [theme, setTheme] = useState<Theme>('matrix');
     const [isLoaded, setIsLoaded] = useState(false);
+    const [cursorPosition, setCursorPosition] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const terminalRef = useRef<HTMLDivElement>(null);
+    const cursorRef = useRef<HTMLSpanElement>(null);
 
     // Focus input on mount and load theme from localStorage
     useEffect(() => {
@@ -34,6 +36,56 @@ export default function SimpleTerminal() {
 
         return () => clearTimeout(timer);
     }, []);
+
+    // Update cursor position when input changes or cursor moves
+    useEffect(() => {
+        const updateCursorPosition = () => {
+            if (inputRef.current && cursorRef.current) {
+                const input = inputRef.current;
+                const cursor = cursorRef.current;
+
+                // Get cursor position
+                const selectionStart = input.selectionStart || 0;
+                setCursorPosition(selectionStart);
+
+                // Create a temporary span to measure text width
+                const tempSpan = document.createElement('span');
+                tempSpan.style.font = window.getComputedStyle(input).font;
+                tempSpan.style.visibility = 'hidden';
+                tempSpan.style.position = 'absolute';
+                tempSpan.textContent = input.value.substring(0, selectionStart);
+                document.body.appendChild(tempSpan);
+
+                const textWidth = tempSpan.getBoundingClientRect().width;
+                document.body.removeChild(tempSpan);
+
+                // Position cursor
+                cursor.style.left = `${textWidth}px`;
+            }
+        };
+
+        // Update cursor position on input change
+        updateCursorPosition();
+
+        // Also update when clicking or using arrow keys
+        const handleSelectionChange = () => {
+            setTimeout(updateCursorPosition, 0);
+        };
+
+        if (inputRef.current) {
+            inputRef.current.addEventListener('click', handleSelectionChange);
+            inputRef.current.addEventListener('keyup', handleSelectionChange);
+            inputRef.current.addEventListener('select', handleSelectionChange);
+        }
+
+        return () => {
+            if (inputRef.current) {
+                inputRef.current.removeEventListener('click', handleSelectionChange);
+                inputRef.current.removeEventListener('keyup', handleSelectionChange);
+                inputRef.current.removeEventListener('select', handleSelectionChange);
+            }
+        };
+    }, [input, isLoaded]);
 
     // Scroll to bottom when new content is added
     useEffect(() => {
@@ -238,21 +290,24 @@ export default function SimpleTerminal() {
                 {/* Current input line */}
                 <div className={`flex items-baseline ${getPromptClasses()}`}>
                     <span className="shrink-0 select-none">guest@andrese03.me:~$ </span>
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        className="flex-1 terminal-input"
-                        autoComplete="off"
-                        spellCheck={false}
-                        style={{
-                            fontFamily: 'inherit',
-                            fontSize: 'inherit',
-                            lineHeight: 'inherit'
-                        }}
-                    />
+                    <div className="flex-1 relative">
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            className="w-full terminal-input terminal-input-hidden-cursor"
+                            autoComplete="off"
+                            spellCheck={false}
+                            style={{
+                                fontFamily: 'inherit',
+                                fontSize: 'inherit',
+                                lineHeight: 'inherit'
+                            }}
+                        />
+                        <span ref={cursorRef} className="terminal-input-cursor"></span>
+                    </div>
                 </div>
             </div>
         </div>
