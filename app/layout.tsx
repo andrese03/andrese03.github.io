@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://andrese03.github.io'),
   title: 'Andrés Encarnación | Software Developer',
   description:
     'Full-stack software developer specializing in JavaScript, TypeScript, React, and modern web technologies. 6+ years of experience building scalable web applications.',
