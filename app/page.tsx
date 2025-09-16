@@ -1,5 +1,5 @@
-import SimpleTerminal from '@/components/SimpleTerminal'
+import SimpleTerminal from '@/components/SimpleTerminal';
 
 export default function Home() {
-    return <SimpleTerminal />
+  return <SimpleTerminal />;
 }

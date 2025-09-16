@@ -38,22 +38,26 @@ Type these commands in the terminal:
 ## 📦 Installation & Setup
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/andrese03/andrese03.github.io.git
    cd andrese03.github.io
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Run development server**:
+
    ```bash
    npm run dev
    ```
 
 4. **Build for production**:
+
    ```bash
    npm run build
    ```
@@ -78,6 +82,7 @@ NEXT_PUBLIC_SHEET_API_BASE=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exe
 To set up dynamic data from Google Sheets:
 
 1. **Create a Google Apps Script** with the following code:
+
    ```javascript
    function doGet(e) {
      const tab = e.parameter.t || 'projects';
@@ -92,9 +97,9 @@ To set up dynamic data from Google Sheets:
        });
        return obj;
      });
-     return ContentService
-       .createTextOutput(JSON.stringify(result))
-       .setMimeType(ContentService.MimeType.JSON);
+     return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(
+       ContentService.MimeType.JSON
+     );
    }
    ```
 
@@ -116,6 +121,7 @@ The project is configured for automatic deployment to GitHub Pages:
 3. **Static files** are served from the `out/` directory
 
 For manual deployment:
+
 ```bash
 npm run build
 # Commit and push the generated files

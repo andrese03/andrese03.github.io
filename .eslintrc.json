@@ -1,0 +1,29 @@
+{
+  "extends": ["next/core-web-vitals", "prettier"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "tabWidth": 2,
+        "semi": true,
+        "printWidth": 80,
+        "endOfLine": "lf"
+      }
+    ],
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "no-debugger": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "*.config.js",
+    "*.config.ts"
+  ]
+}

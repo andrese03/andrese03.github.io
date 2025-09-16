@@ -5,8 +5,13 @@ on:
     branches: [ development ]
 
 jobs:
+  # Run CI checks first
+  ci-checks:
+    uses: ./.github/workflows/ci.yml
+  
   tag-release:
     runs-on: ubuntu-latest
+    needs: ci-checks
     permissions:
       contents: write
     
@@ -90,12 +95,11 @@ jobs:
           draft: false
           prerelease: false
       
-      - name: Build project
-        run: |
-          npm ci
-          npm run build
+      - name: Run full CI pipeline
+        run: npm run ci
       
       - name: Summary
         run: |
+          echo "✅ CI Pipeline: All checks passed (lint, typecheck, tests, build)"
           echo "✅ Successfully created tag and release for version ${{ steps.get_version.outputs.version }}"
           echo "🔗 Release URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_version.outputs.version }}"
