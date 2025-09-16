@@ -131,4 +131,129 @@ describe('SimpleTerminal', () => {
     fireEvent.keyDown(input, { key: 'ArrowUp' });
     expect(input).toHaveValue('help');
   });
+
+  it('handles all available commands', async () => {
+    render(<SimpleTerminal />);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    const input = screen.getByRole('textbox');
+    const commands = ['contact', 'projects', 'clear'];
+
+    for (const command of commands) {
+      fireEvent.change(input, { target: { value: command } });
+      fireEvent.keyDown(input, { key: 'Enter' });
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('')).toBeInTheDocument();
+      });
+    }
+  });
+
+  it('handles empty command input', async () => {
+    render(<SimpleTerminal />);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: '' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    // Should not add anything to history for empty commands
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+  });
+
+  it('handles theme command variations', async () => {
+    render(<SimpleTerminal />);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    const input = screen.getByRole('textbox');
+
+    // Test theme without arguments
+    fireEvent.change(input, { target: { value: 'theme' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(screen.getByText(/current theme options/i)).toBeInTheDocument();
+    });
+
+    // Test invalid theme
+    fireEvent.change(input, { target: { value: 'theme invalid' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(screen.getByText(/invalid theme/i)).toBeInTheDocument();
+    });
+  });
+
+  it('handles arrow down navigation in command history', async () => {
+    render(<SimpleTerminal />);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    const input = screen.getByRole('textbox');
+
+    // Execute multiple commands
+    fireEvent.change(input, { target: { value: 'help' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    fireEvent.change(input, { target: { value: 'whoami' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    // Navigate up then down
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('whoami');
+
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('help');
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(input).toHaveValue('whoami');
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(input).toHaveValue('');
+  });
+
+  it('loads saved theme from localStorage', () => {
+    mockLocalStorage.getItem.mockReturnValue('dark');
+
+    render(<SimpleTerminal />);
+
+    expect(mockLocalStorage.getItem).toHaveBeenCalledWith('terminal_theme');
+  });
+
+  it('focuses input when clicking on terminal', async () => {
+    render(<SimpleTerminal />);
+
+    const terminal = screen.getByRole('textbox').closest('div');
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    if (terminal) {
+      fireEvent.click(terminal);
+    }
+
+    expect(screen.getByRole('textbox')).toHaveFocus();
+  });
 });
